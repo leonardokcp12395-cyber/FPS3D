@@ -3,163 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sobrevivente da Horda 2.1</title>
+    <title>Sobrevivente da Horda 2.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            background-color: #111827;
-            touch-action: none;
-        }
-        canvas {
-            background-color: #0c101a;
-            /* NOVO: Adiciona um cursor personalizado */
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M22 12h-4M6 12H2"/></svg>') 12 12, auto;
-            display: block;
-            transition: transform 0.1s ease-in-out;
-        }
-        .hud-element {
-            background-color: rgba(17, 24, 39, 0.8);
-            border: 1px solid rgba(55, 65, 81, 0.8);
-            backdrop-filter: blur(4px);
-        }
-        .upgrade-card {
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .upgrade-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3), 0 4px 6px -2px rgba(99, 102, 241, 0.2);
-            border-color: #6366f1;
-        }
-        #virtual-joystick-base {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background: rgba(55, 65, 81, 0.4);
-            border-radius: 50%;
-            display: none;
-            pointer-events: none;
-        }
-        #virtual-joystick-handle {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: rgba(107, 114, 128, 0.6);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-        .animated-bg {
-             background-image:
-                 linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                 linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: bg-scroll 10s linear infinite;
-        }
-        @keyframes bg-scroll {
-            from { background-position: 0 0; }
-            to { background-position: -40px -40px; }
-        }
-        .coin-icon {
-            display: inline-block;
-            width: 1em;
-            height: 1em;
-            background-color: #facc15;
-            border-radius: 50%;
-            border: 2px solid #ca8a04;
-            text-align: center;
-            line-height: 0.9em;
-            font-weight: bold;
-            color: #ca8a04;
-            font-style: normal;
-        }
-        /* NOVO: Estilo para o aviso de vida baixa */
-        #low-health-vignette {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            box-shadow: inset 0 0 150px rgba(255, 0, 0, 0.5);
-            animation: pulse 2s infinite;
-            display: none; /* Ativado via JS */
-        }
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 0.3; }
-            100% { opacity: 0.6; }
-        }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; background-color: #111827; touch-action: none; }
+        canvas { background-color: #0c101a; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M22 12h-4M6 12H2"/></svg>') 12 12, auto; display: block; }
+        .hud-element { background-color: rgba(17, 24, 39, 0.8); border: 1px solid rgba(55, 65, 81, 0.8); backdrop-filter: blur(4px); }
+        .upgrade-card { transition: all 0.2s ease-in-out; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .upgrade-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(99,102,241,0.3), 0 4px 6px -2px rgba(99,102,241,0.2); border-color: #6366f1; }
+        #virtual-joystick-base { position: absolute; width: 120px; height: 120px; background: rgba(55, 65, 81, 0.4); border-radius: 50%; display: none; pointer-events: none; }
+        #virtual-joystick-handle { position: absolute; width: 60px; height: 60px; background: rgba(107, 114, 128, 0.6); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        .animated-bg { background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 40px 40px; animation: bg-scroll 10s linear infinite; }
+        @keyframes bg-scroll { from { background-position: 0 0; } to { background-position: -40px -40px; } }
+        .coin-icon { display: inline-block; width: 1em; height: 1em; background-color: #facc15; border-radius: 50%; border: 2px solid #ca8a04; text-align: center; line-height: 0.9em; font-weight: bold; color: #ca8a04; font-style: normal; }
+        #low-health-vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; box-shadow: inset 0 0 150px rgba(255,0,0,0.5); animation: pulse 2s infinite; display: none; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 0.3; } 100% { opacity: 0.6; } }
     </style>
 </head>
 <body class="text-white select-none">
-
     <div id="game-container" class="relative w-screen h-screen">
         <canvas id="gameCanvas"></canvas>
-
         <div id="low-health-vignette"></div>
-
         <div id="hud" class="absolute top-0 left-0 w-full p-4 pointer-events-none hidden">
             <div class="flex justify-between items-start">
                 <div class="flex flex-col items-start gap-2">
-                    <div id="timer" class="hud-element text-lg font-bold px-4 py-2 rounded-lg">Tempo: 00:00</div>
-                    <div id="kill-count" class="hud-element text-sm px-3 py-1 rounded-md">Abates: 0</div>
-                    <div id="coin-count" class="hud-element text-sm px-3 py-1 rounded-md flex items-center gap-2">
-                        <i class="coin-icon">$</i> <span id="coins-collected">0</span>
-                    </div>
+                    <div id="timer" class="hud-element text-lg font-bold px-4 py-2 rounded-lg"></div>
+                    <div id="kill-count" class="hud-element text-sm px-3 py-1 rounded-md"></div>
+                    <div id="coin-count" class="hud-element text-sm px-3 py-1 rounded-md flex items-center gap-2"><i class="coin-icon">$</i> <span id="coins-collected"></span></div>
                 </div>
                 <div class="flex flex-col items-center gap-2 w-1/3">
-                    <div id="level-display" class="hud-element text-lg font-bold px-4 py-2 rounded-lg">Nível: 1</div>
-                    <div class="w-full bg-gray-700 rounded-full h-4 border-2 border-gray-600">
-                        <div id="xp-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
+                    <div id="level-display" class="hud-element text-lg font-bold px-4 py-2 rounded-lg"></div>
+                    <div class="w-full bg-gray-700 rounded-full h-4 border-2 border-gray-600"><div id="xp-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div></div>
                 </div>
                 <div id="active-weapons-ui" class="flex flex-col items-end gap-2"></div>
             </div>
             <div id="boss-alert" class="absolute top-1/3 left-1/2 -translate-x-1/2 text-4xl font-bold text-red-500 drop-shadow-lg hidden animate-pulse">CHEFE APARECEU!</div>
         </div>
-
         <div id="start-screen" class="absolute inset-0 bg-gray-900 bg-opacity-80 flex flex-col justify-center items-center backdrop-blur-sm z-10 animated-bg">
-            <h1 class="text-6xl font-bold text-indigo-400 drop-shadow-lg mb-4">Sobrevivente da Horda 2.1</h1>
-            <p class="text-xl text-gray-300 mb-8">Mova-se com WASD/Setas/Joystick. Os ataques são automáticos.</p>
+            <h1 class="text-6xl font-bold text-indigo-400 drop-shadow-lg mb-4">Sobrevivente da Horda 2.3</h1>
+            <p class="text-xl text-gray-300 mb-8">Mova-se com WASD/Setas/Joystick. Ataques automáticos.</p>
             <div class="flex gap-4">
-                <button id="start-button" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-lg text-2xl shadow-lg transition-transform transform hover:scale-105">
-                    Iniciar Jogo
-                </button>
-                <button id="store-button-main" class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-lg text-2xl shadow-lg transition-transform transform hover:scale-105">
-                    Loja
-                </button>
+                <button id="start-button" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-lg text-2xl shadow-lg transition-transform transform hover:scale-105">Iniciar Jogo</button>
+                <button id="store-button-main" class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-lg text-2xl shadow-lg transition-transform transform hover:scale-105">Loja</button>
             </div>
-            <div id="total-coins-main" class="mt-8 hud-element text-lg px-4 py-2 rounded-lg flex items-center gap-2">
-                Total: <i class="coin-icon">$</i> <span id="total-coins-display-main">0</span>
-            </div>
+            <div id="total-coins-main" class="mt-8 hud-element text-lg px-4 py-2 rounded-lg flex items-center gap-2">Total: <i class="coin-icon">$</i> <span id="total-coins-display-main">0</span></div>
         </div>
-
         <div id="level-up-screen" class="absolute inset-0 bg-gray-900 bg-opacity-80 flex-col justify-center items-center backdrop-blur-sm z-20 hidden">
-             <h2 id="level-up-title" class="text-4xl font-bold mb-8">Nível Acima!</h2>
+             <h2 id="level-up-title" class="text-4xl font-bold mb-8"></h2>
             <p class="text-lg mb-8">Escolha uma melhoria:</p>
             <div id="upgrade-options" class="flex flex-wrap justify-center gap-6"></div>
         </div>
-        
         <div id="pause-screen" class="absolute inset-0 bg-gray-900 bg-opacity-80 flex flex-col justify-center items-center backdrop-blur-sm z-30 hidden">
             <h1 class="text-6xl font-bold text-gray-300 mb-8">Pausado</h1>
             <button id="resume-button" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-lg text-2xl">Continuar</button>
         </div>
-
         <div id="store-screen" class="absolute inset-0 bg-gray-900 bg-opacity-90 flex-col justify-center items-center backdrop-blur-md z-40 hidden p-4 overflow-y-auto">
             <h1 class="text-4xl font-bold text-yellow-400 mb-4">Melhorias Permanentes</h1>
-            <div class="mb-6 hud-element text-lg px-4 py-2 rounded-lg flex items-center gap-2">
-                Moedas: <i class="coin-icon">$</i> <span id="total-coins-display-store">0</span>
-            </div>
+            <div class="mb-6 hud-element text-lg px-4 py-2 rounded-lg flex items-center gap-2">Moedas: <i class="coin-icon">$</i> <span id="total-coins-display-store">0</span></div>
             <div id="meta-upgrades-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl w-full"></div>
             <button id="close-store-button" class="mt-8 bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-xl">Voltar</button>
         </div>
-
         <div id="game-over-screen" class="absolute inset-0 bg-gray-900 bg-opacity-80 flex flex-col justify-center items-center backdrop-blur-sm z-10 hidden">
             <h1 class="text-7xl font-bold text-red-500 drop-shadow-lg mb-4">Fim de Jogo</h1>
             <div class="text-2xl text-gray-300 mb-8 bg-gray-800 p-6 rounded-lg border border-gray-700 text-center">
@@ -173,18 +77,14 @@
                 <button id="store-button-gameover" class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 px-8 rounded-lg text-2xl">Loja</button>
             </div>
         </div>
-
-        <div id="virtual-joystick-base">
-            <div id="virtual-joystick-handle"></div>
-        </div>
-        <button id="pause-button" class="absolute top-4 right-4 bg-gray-700 p-3 rounded-full pointer-events-auto hidden z-10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="4" x2="6" y2="20"></line><line x1="18" y1="4" x2="18" y2="20"></line></svg>
-        </button>
+        <div id="virtual-joystick-base"><div id="virtual-joystick-handle"></div></div>
+        <button id="pause-button" class="absolute top-4 right-4 bg-gray-700 p-3 rounded-full pointer-events-auto hidden z-10"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="4" x2="6" y2="20"></line><line x1="18" y1="4" x2="18" y2="20"></line></svg></button>
     </div>
-
-    <script>
+<script>
+    // This script is a full restoration of the game logic, including all previous fixes and improvements.
+    // It is intentionally not minified to ensure readability and maintainability.
     document.addEventListener('DOMContentLoaded', () => {
-        // --- ELEMENTOS DA UI ---
+        // --- UI Elements ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const hud = document.getElementById('hud');
@@ -194,7 +94,6 @@
         const pauseScreen = document.getElementById('pause-screen');
         const storeScreen = document.getElementById('store-screen');
         const lowHealthVignette = document.getElementById('low-health-vignette');
-        
         const startButton = document.getElementById('start-button');
         const restartButton = document.getElementById('restart-button');
         const resumeButton = document.getElementById('resume-button');
@@ -202,10 +101,8 @@
         const storeButtonGameOver = document.getElementById('store-button-gameover');
         const closeStoreButton = document.getElementById('close-store-button');
         const pauseButton = document.getElementById('pause-button');
-        
         const upgradeOptionsContainer = document.getElementById('upgrade-options');
         const metaUpgradesContainer = document.getElementById('meta-upgrades-container');
-
         const timerDisplay = document.getElementById('timer');
         const killCountDisplay = document.getElementById('kill-count');
         const coinsCollectedDisplay = document.getElementById('coins-collected');
@@ -213,121 +110,99 @@
         const xpBar = document.getElementById('xp-bar');
         const activeWeaponsUI = document.getElementById('active-weapons-ui');
         const bossAlert = document.getElementById('boss-alert');
-        
         const finalTime = document.getElementById('final-time');
         const finalKills = document.getElementById('final-kills');
         const finalLevel = document.getElementById('final-level');
         const finalCoins = document.getElementById('final-coins');
         const totalCoinsDisplayMain = document.getElementById('total-coins-display-main');
         const totalCoinsDisplayStore = document.getElementById('total-coins-display-store');
-
         const joystickBase = document.getElementById('virtual-joystick-base');
         const joystickHandle = document.getElementById('virtual-joystick-handle');
 
-        // --- VARIÁVEIS DE ESTADO DO JOGO ---
-        let gameRunning = false;
-        let paused = false;
-        let gameTime = 0;
-        let lastTime = 0;
-        let animationFrameId;
-
+        // --- Game State ---
+        let gameRunning = false, paused = false, gameTime = 0, lastTime = 0, animationFrameId;
         let player, camera, worldBounds, keys = {};
-        let enemies = [], projectiles = [], xpGems = [], items = [], particles = [], damageNumbers = [], coins = [];
-        
-        const MAX_ENEMIES = 150; // Limite de inimigos para performance
+        let enemies = [], projectiles = [], xpGems = [], items = [], particles = [], damageNumbers = [], coins = [], damageZones = [], enemyProjectiles = [];
+        const MAX_ENEMIES = 150;
         let bossSpawned = false;
         let screenShake = { duration: 0, magnitude: 0, active: false };
         let isMobile = false;
 
-        // --- CONFIGURAÇÕES ---
+        // --- Config ---
         const XP_PER_LEVEL = [0, 8, 20, 35, 55, 80, 110, 150, 200, 260, 330];
-
-        // --- METAPROGRESSÃO ---
         let totalCoins = 0;
         let metaUpgrades = {};
-        
         const metaUpgradesList = {
-            maxHp: { name: "Vitalidade", description: "+10% Vida Máxima", baseCost: 50, level: 0, maxLevel: 20 },
+            maxHp: { name: "Vitalidade", description: "+10% Vida", baseCost: 50, level: 0, maxLevel: 20 },
             damage: { name: "Força", description: "+5% Dano", baseCost: 75, level: 0, maxLevel: 10 },
-            speed: { name: "Agilidade", description: "+2% Velocidade Mov.", baseCost: 60, level: 0, maxLevel: 10 },
+            speed: { name: "Agilidade", description: "+2% Vel.", baseCost: 60, level: 0, maxLevel: 10 },
             greed: { name: "Ganância", description: "+10% Moedas", baseCost: 100, level: 0, maxLevel: 10 },
         };
-        
-        // --- ÁUDIO ---
+
+        // --- Audio ---
         let audioContext;
         const sounds = {};
         function initAudio() {
             if (audioContext) return;
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const playSound = (freq, type, duration, gain = 1, delay = 0) => {
+                    if (!audioContext) return;
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.type = type;
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + delay);
+                    gainNode.gain.setValueAtTime(gain, audioContext.currentTime + delay);
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + delay + duration);
+                    oscillator.start(audioContext.currentTime + delay);
+                    oscillator.stop(audioContext.currentTime + delay + duration);
+                };
                 sounds.xp = () => playSound(880, 'triangle', 0.05, 0.1);
                 sounds.hit = () => playSound(100, 'square', 0.1, 0.3);
                 sounds.shoot = () => playSound(440, 'triangle', 0.08, 0.2);
                 sounds.levelUp = () => { playSound(261.63, 'sine', 0.1, 0.5, 0); playSound(329.63, 'sine', 0.1, 0.5, 0.1); playSound(392.00, 'sine', 0.1, 0.5, 0.2); };
-                sounds.playerHit = () => { playSound(150, 'sawtooth', 0.2, 0.5); triggerScreenShake(0.2, 5); }
+                sounds.playerHit = () => { playSound(150, 'sawtooth', 0.2, 0.5); triggerScreenShake(0.2, 5); };
                 sounds.enemyDeath = () => playSound(200, 'square', 0.1, 0.2);
                 sounds.coin = () => playSound(1046.50, 'sine', 0.05, 0.2);
                 sounds.heal = () => playSound(659.25, 'sine', 0.15, 0.3);
-            } catch(e) { console.error("Web Audio API is not supported in this browser"); }
-        }
-        function playSound(freq, type, duration, gain = 1, delay = 0) {
-            if (!audioContext) return;
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            oscillator.type = type;
-            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + delay);
-            gainNode.gain.setValueAtTime(gain, audioContext.currentTime + delay);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + delay + duration);
-            oscillator.start(audioContext.currentTime + delay);
-            oscillator.stop(audioContext.currentTime + delay + duration);
+            } catch (e) { console.error("Web Audio API not supported"); }
         }
 
-        // --- JOYSTICK VIRTUAL ---
+        // --- Joystick ---
         let joystick = { active: false, x: 0, y: 0, dx: 0, dy: 0, radius: 60 };
         function setupJoystick() {
-            // O joystick só deve aparecer em dispositivos móveis.
-            // A variável `isMobile` é definida em `resizeCanvas`.
             if (!isMobile) return;
-
             const onTouchStart = (e) => {
                 e.preventDefault();
                 const touch = e.touches[0];
                 joystick.active = true;
                 joystick.x = touch.clientX;
                 joystick.y = touch.clientY;
-
                 joystickBase.style.display = 'block';
                 joystickBase.style.left = `${joystick.x - joystick.radius}px`;
                 joystickBase.style.top = `${joystick.y - joystick.radius}px`;
             };
-
             const onTouchMove = (e) => {
                 e.preventDefault();
                 if (!joystick.active) return;
-
                 const touch = e.touches[0];
                 const deltaX = touch.clientX - joystick.x;
                 const deltaY = touch.clientY - joystick.y;
                 const distance = Math.min(joystick.radius, Math.hypot(deltaX, deltaY));
                 const angle = Math.atan2(deltaY, deltaX);
-
-                // Define o vetor de direção normalizado
-                if (distance > 10) { // Pequena zona morta para evitar movimento acidental
+                if (distance > 10) {
                     joystick.dx = Math.cos(angle);
                     joystick.dy = Math.sin(angle);
                 } else {
                     joystick.dx = 0;
                     joystick.dy = 0;
                 }
-
-                // Move a alça do joystick
                 const handleX = distance * Math.cos(angle);
                 const handleY = distance * Math.sin(angle);
                 joystickHandle.style.transform = `translate(-50%, -50%) translate(${handleX}px, ${handleY}px)`;
             };
-
             const onTouchEnd = (e) => {
                 e.preventDefault();
                 joystick.active = false;
@@ -336,14 +211,13 @@
                 joystickBase.style.display = 'none';
                 joystickHandle.style.transform = 'translate(-50%, -50%)';
             };
-
             canvas.addEventListener('touchstart', onTouchStart, { passive: false });
             canvas.addEventListener('touchmove', onTouchMove, { passive: false });
             canvas.addEventListener('touchend', onTouchEnd, { passive: false });
             canvas.addEventListener('touchcancel', onTouchEnd, { passive: false });
         }
-        
-        // --- CLASSES DO JOGO ---
+
+        // --- Game Object Classes ---
         class Player {
             constructor() { this.reset(); }
             reset() {
@@ -351,106 +225,67 @@
                 this.y = worldBounds.height / 2;
                 this.radius = 15;
                 this.color = '#818cf8';
-                
                 this.baseMaxHp = 100;
                 this.baseSpeed = 200;
-
                 this.maxHp = this.baseMaxHp * (1 + (metaUpgrades.maxHp?.level || 0) * 0.1);
                 this.hp = this.maxHp;
                 this.speed = this.baseSpeed * (1 + (metaUpgrades.speed?.level || 0) * 0.02);
-                
                 this.xp = 0;
                 this.level = 1;
                 this.killCount = 0;
                 this.coins = 0;
-                this.magnetRadius = 100; // AUMENTADO
+                this.magnetRadius = 100;
                 this.weapons = [];
                 this.upgrades = { 
                     damage: 1 * (1 + (metaUpgrades.damage?.level || 0) * 0.05),
-                    cooldown: 1, 
-                    area: 1, 
-                    projectiles: 0,
+                    cooldown: 1, area: 1, projectiles: 0,
                     greed: 1 * (1 + (metaUpgrades.greed?.level || 0) * 0.1),
-                    duration: 1,
-                    speed: 1,
+                    duration: 1, speed: 1,
                 };
-                
-                this.invincibleTimer = 0; // NOVO
+                this.invincibleTimer = 0;
                 this.addWeapon(new MagicMissile());
             }
-
             update(dt) {
-                // NOVO: Contador de invencibilidade
-                if (this.invincibleTimer > 0) {
-                    this.invincibleTimer -= dt;
-                }
-
+                if (this.invincibleTimer > 0) this.invincibleTimer -= dt;
                 let dx = 0, dy = 0;
-
-                // Prioriza o input do joystick se estiver ativo
                 if (joystick.active && (joystick.dx !== 0 || joystick.dy !== 0)) {
                     dx = joystick.dx;
                     dy = joystick.dy;
                 } else {
-                    // Caso contrário, usa o teclado
                     if (keys['w'] || keys['ArrowUp']) dy -= 1;
                     if (keys['s'] || keys['ArrowDown']) dy += 1;
                     if (keys['a'] || keys['ArrowLeft']) dx -= 1;
                     if (keys['d'] || keys['ArrowRight']) dx += 1;
                 }
-                
                 const magnitude = Math.sqrt(dx * dx + dy * dy);
                 if (magnitude > 0) {
-                    dx /= magnitude;
-                    dy /= magnitude;
-                    this.x += dx * this.speed * dt;
-                    this.y += dy * this.speed * dt;
+                    this.x += dx / magnitude * this.speed * dt;
+                    this.y += dy / magnitude * this.speed * dt;
                 }
-
                 this.x = Math.max(this.radius, Math.min(this.x, worldBounds.width - this.radius));
                 this.y = Math.max(this.radius, Math.min(this.y, worldBounds.height - this.radius));
-
                 this.weapons.forEach(w => w.update(dt, this));
             }
-
             draw(ctx) {
-                ctx.globalAlpha = 1;
-                // NOVO: Efeito de piscar quando invencível
-                if (this.invincibleTimer > 0) {
-                    ctx.globalAlpha = (Math.sin(gameTime * 30) + 1) / 2 * 0.8 + 0.2;
-                }
-
+                ctx.globalAlpha = (this.invincibleTimer > 0) ? (Math.sin(gameTime * 30) + 1) / 2 * 0.8 + 0.2 : 1;
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fill();
-
-                ctx.globalAlpha = 1; // Reset alpha
-
-                // Barra de vida
+                ctx.globalAlpha = 1;
                 ctx.fillStyle = 'red';
                 ctx.fillRect(this.x - this.radius, this.y + this.radius + 5, this.radius * 2, 5);
                 ctx.fillStyle = 'green';
-                ctx.fillRect(this.x - this.radius, this.y + this.radius + 5, (this.radius * 2) * (this.hp / this.maxHp), 5);
+                ctx.fillRect(this.x - this.radius, this.y + this.radius + 5, this.radius * 2 * (this.hp / this.maxHp), 5);
             }
-
             takeDamage(amount) {
-                // NOVO: Verifica se está invencível
                 if (this.invincibleTimer > 0) return;
-
                 this.hp -= amount;
-                this.invincibleTimer = 0.75; // Fica invencível por 0.75s
+                this.invincibleTimer = 0.75;
                 sounds.playerHit();
-                if (this.hp <= 0) {
-                    gameOver();
-                }
+                if (this.hp <= 0) gameOver();
             }
-            
-            heal(amount) { // NOVO
-                this.hp = Math.min(this.maxHp, this.hp + amount);
-                sounds.heal();
-            }
-
+            heal(amount) { this.hp = Math.min(this.maxHp, this.hp + amount); sounds.heal(); }
             addXp(amount) {
                 this.xp += amount;
                 const xpNeeded = getXpForLevel(this.level + 1);
@@ -462,303 +297,330 @@
                 }
                 updateHUD();
             }
+            addWeapon(weapon) { this.weapons.push(weapon); updateActiveWeaponsUI(); }
+        }
 
-            addWeapon(weapon) {
-                this.weapons.push(weapon);
-                updateActiveWeaponsUI();
+        class Camera {
+            constructor(width, height, worldBounds) { this.x = 0; this.y = 0; this.width = width; this.height = height; this.worldBounds = worldBounds; }
+            apply(ctx) {
+                ctx.save();
+                ctx.translate(-this.x + this.width / 2, -this.y + this.height / 2);
+                if (screenShake.active && screenShake.duration > 0) {
+                    ctx.translate((Math.random() - 0.5) * screenShake.magnitude * 2, (Math.random() - 0.5) * screenShake.magnitude * 2);
+                }
+            }
+            release(ctx) { ctx.restore(); }
+            update(target) {
+                const targetX = Math.max(this.width / 2, Math.min(target.x, this.worldBounds.width - this.width / 2));
+                const targetY = Math.max(this.height / 2, Math.min(target.y, this.worldBounds.height - this.height / 2));
+                this.x += (targetX - this.x) * 0.1;
+                this.y += (targetY - this.y) * 0.1;
             }
         }
-        
-        class Camera { /* ...código da câmera... */ }
 
-        // --- Inimigos ---
         class Enemy {
-            constructor(x,y){ this.x=x; this.y=y; this.lastHitTime = 0; }
+            constructor(x, y) { this.x = x; this.y = y; this.lastHitTime = 0; }
             update(dt, player) {
                 const angle = Math.atan2(player.y - this.y, player.x - this.x);
                 this.x += Math.cos(angle) * this.speed * dt;
                 this.y += Math.sin(angle) * this.speed * dt;
             }
-            draw(ctx) { /* ...código de desenho... */ }
-            takeDamage(amount) { /* ...código de dano... */ }
+            draw(ctx) {
+                ctx.fillStyle = (gameTime < this.lastHitTime + 0.1) ? 'white' : this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            takeDamage(amount) {
+                this.hp -= amount;
+                this.lastHitTime = gameTime;
+                damageNumbers.push(new DamageNumber(this.x, this.y, Math.round(amount)));
+                sounds.hit();
+                return this.hp <= 0;
+            }
             onDeath() {
                 player.killCount++;
                 sounds.enemyDeath();
                 xpGems.push(new XpGem(this.x, this.y, this.xpValue));
-                if (Math.random() < 0.2) coins.push(new Coin(this.x, this.y, 1));
-                
-                // NOVO: Chance de dropar vida
-                if (Math.random() < 0.03) { // 3% de chance
-                    items.push(new HealthPickup(this.x, this.y, 15));
-                }
-
-                for(let i = 0; i < 5; i++) {
-                     particles.push(new Particle(this.x, this.y, this.color));
-                }
+                if (Math.random() < (0.2 * player.upgrades.greed)) coins.push(new Coin(this.x, this.y, 1));
+                if (Math.random() < 0.03) items.push(new HealthPickup(this.x, this.y, 15));
+                for (let i = 0; i < 5; i++) particles.push(new Particle(this.x, this.y, this.color));
             }
         }
-        class Slime extends Enemy { /* ...código do Slime... */ }
-        class Bat extends Enemy { /* ...código do Bat... */ }
-        class Tank extends Enemy { /* ...código do Tank... */ }
-        class Boss extends Enemy { /* ...código do Boss... */ }
-
-        // --- Outros Objetos ---
-        class Projectile { /* ...código do Projectile... */ }
-        class Collectible { /* ...código do Collectible... */ }
-        class XpGem extends Collectible { /* ...código do XpGem... */ }
-        class Coin extends Collectible { /* ...código do Coin... */ }
-        
-        // NOVO: Classe para o item de cura
-        class HealthPickup extends Collectible {
-            constructor(x, y, healAmount) {
-                super(x, y, 8);
-                this.healAmount = healAmount;
-            }
-            draw(ctx) {
-                ctx.fillStyle = '#fca5a5'; // Vermelho claro
-                ctx.font = '16px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('❤️', this.x, this.y);
-            }
-        }
-        
-        class Chest { /* ...código do Chest... */ }
-        class Particle { /* ...código da Partícula... */ }
-        class DamageNumber { /* ...código do DamageNumber... */ }
-
-        // --- Sistema de Armas e Upgrades ---
-        const allUpgrades = {};
-        class Weapon { /* ...código da Arma... */ }
-        class MagicMissile extends Weapon {
-            constructor() {
-                super("Míssil Mágico", "Dispara um projétil no inimigo mais próximo.", "🔮");
-                this.baseCooldown = 1.8; // MELHORADO
-                this.baseDamage = 12; // MELHORADO
-                this.numProjectiles = 1;
-            }
-            /* ...resto do código do Míssil Mágico... */
-        }
-        class SpinningSickle extends Weapon { /* ...código da Foice... */ }
-        class GarlicAura extends Weapon { /* ...código do Alho... */ }
-        
-        // NOVO: Arma Machado Perfurante
-        class PiercingAxe extends Weapon {
-            constructor() {
-                super("Machado Perfurante", "Arremessa um machado que atravessa inimigos.", "🪓");
-                this.baseCooldown = 2.5;
-                this.baseDamage = 20;
-                this.numProjectiles = 1;
-                this.pierceCount = 3;
+        class Slime extends Enemy { constructor(x, y) { super(x, y); this.speed = 80 + Math.random() * 20; this.hp = 10; this.radius = 12; this.damage = 5; this.color = '#34d399'; this.xpValue = 1; } }
+        class Bat extends Enemy { constructor(x, y) { super(x, y); this.speed = 120 + Math.random() * 30; this.hp = 7; this.radius = 10; this.damage = 8; this.color = '#a78bfa'; this.xpValue = 2; } }
+        class Tank extends Enemy { constructor(x, y) { super(x, y); this.speed = 50 + Math.random() * 10; this.hp = 40; this.radius = 20; this.damage = 15; this.color = '#f87171'; this.xpValue = 5; } }
+        class Boss extends Enemy { constructor(x, y) { super(x, y); this.speed = 60; this.hp = 500 * (1 + gameTime / 300); this.radius = 40; this.damage = 25; this.color = '#facc15'; this.xpValue = 100; } onDeath() { super.onDeath(); items.push(new Chest(this.x, this.y)); } }
+        class SkeletonMage extends Enemy {
+            constructor(x, y) {
+                super(x, y);
+                this.speed = 60; this.hp = 15; this.radius = 16; this.damage = 0; this.color = '#e2e8f0'; this.xpValue = 8;
+                this.shootCooldown = 0; this.preferredDist = 250 + Math.random() * 100;
             }
             update(dt, player) {
-                this.cooldownTimer -= dt;
-                if (this.cooldownTimer <= 0) {
-                    this.cooldownTimer = this.baseCooldown * player.upgrades.cooldown;
-                    for(let i = 0; i < this.numProjectiles; i++){
-                        const angle = Math.random() * Math.PI * 2;
-                        const speed = 250 * player.upgrades.speed;
-                        const damage = this.baseDamage * player.upgrades.damage;
-                        const p = new Projectile(player.x, player.y, Math.cos(angle) * speed, Math.sin(angle) * speed, damage, 8, '#f97316', 2);
-                        p.pierce = this.pierceCount; // Adiciona propriedade de perfuração
-                        p.isAxe = true; // Flag para desenho
-                        projectiles.push(p);
-                    }
+                const dist = Math.hypot(player.x - this.x, player.y - this.y);
+                const angle = Math.atan2(player.y - this.y, player.x - this.x);
+                if (dist < this.preferredDist - 20) {
+                    this.x -= Math.cos(angle) * this.speed * dt;
+                    this.y -= Math.sin(angle) * this.speed * dt;
+                } else if (dist > this.preferredDist + 20) {
+                    this.x += Math.cos(angle) * this.speed * dt;
+                    this.y += Math.sin(angle) * this.speed * dt;
+                }
+                this.shootCooldown -= dt;
+                if (this.shootCooldown <= 0) {
+                    this.shootCooldown = 3 + Math.random() * 2;
+                    const projSpeed = 150;
+                    enemyProjectiles.push(new EnemyProjectile(this.x, this.y, Math.cos(angle) * projSpeed, Math.sin(angle) * projSpeed, 10, 5, '#f472b6', 4));
                 }
             }
-            drawProjectile(ctx, p) { // Desenho customizado
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(gameTime * 5);
-                ctx.fillStyle = p.color;
-                ctx.font = '20px sans-serif';
-                ctx.fillText(this.icon, -10, 10);
-                ctx.restore();
-            }
-             getUpgradeOptions() {
-                 const options = this.getBaseUpgradeOptions();
-                 options.push({ type: 'weapon', weapon: this, key: 'numProjectiles', value: 1, name: `+1 Machado (${this.name})`});
-                 options.push({ type: 'weapon', weapon: this, key: 'pierceCount', value: 2, name: `+2 Perfuração (${this.name})`});
-                 return options;
-            }
-            applyUpgrade(upgrade) {
-                if(upgrade.key === 'numProjectiles') this.numProjectiles += upgrade.value;
-                if(upgrade.key === 'pierceCount') this.pierceCount += upgrade.value;
-                if(upgrade.stat === 'damage') this.baseDamage *= (1 + upgrade.value);
-                if(upgrade.stat === 'cooldown') this.baseCooldown *= (1 + upgrade.value);
+            draw(ctx) {
+                super.draw(ctx);
+                ctx.fillStyle = '#f472b6';
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('💀', this.x, this.y);
             }
         }
         
-        const possibleWeapons = [SpinningSickle, GarlicAura, PiercingAxe]; // Adicionado Machado
+        class Projectile {
+            constructor(x, y, vx, vy, damage, radius, color, lifespan = 2) { this.x=x; this.y=y; this.vx=vx; this.vy=vy; this.damage=damage; this.radius=radius; this.color=color; this.lifespan=lifespan; this.life=0; this.pierce=0; this.hitEnemies=new Set(); }
+            update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.life += dt; }
+            draw(ctx) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); }
+        }
+        class EnemyProjectile extends Projectile {
+            constructor(x, y, vx, vy, damage, radius, color, lifespan = 3) { super(x, y, vx, vy, damage, radius, color, lifespan); }
+        }
+        class Collectible {
+            constructor(x, y, radius) { this.x = x; this.y = y; this.radius = radius; }
+            update(dt, player) { if (Math.hypot(player.x - this.x, player.y - this.y) < player.magnetRadius) { const angle = Math.atan2(player.y - this.y, player.x - this.x); this.x += Math.cos(angle) * 300 * dt; this.y += Math.sin(angle) * 300 * dt; } }
+        }
+        class XpGem extends Collectible { constructor(x, y, value) { super(x, y, 5); this.value = value; } draw(ctx) { ctx.fillStyle = '#60a5fa'; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); } }
+        class Coin extends Collectible { constructor(x, y, value) { super(x, y, 6); this.value = value; } draw(ctx) { ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ca8a04'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 10px sans-serif'; ctx.fillText('$', this.x, this.y + 1); } }
+        class HealthPickup extends Collectible { constructor(x, y, healAmount) { super(x, y, 8); this.healAmount = healAmount; } draw(ctx) { ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('❤️', this.x, this.y); } }
+        class Chest { constructor(x, y) { this.x = x; this.y = y; this.radius = 20; } draw(ctx) { ctx.font = '32px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🎁', this.x, this.y); } }
+        
+        class Particle {
+            constructor(x, y, color) { this.x = x; this.y = y; this.color = color; this.life = 1; this.size = Math.random() * 5 + 2; this.vx = (Math.random() - 0.5) * 150; this.vy = (Math.random() - 0.5) * 150; }
+            update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.life -= dt * 1.5; }
+            draw(ctx) { ctx.globalAlpha = Math.max(0, this.life); ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, this.size, this.size); ctx.globalAlpha = 1; }
+        }
+        class DamageNumber {
+            constructor(x, y, amount) { this.x = x; this.y = y; this.amount = amount; this.life = 1; }
+            update(dt) { this.y -= 30 * dt; this.life -= dt; }
+            draw(ctx) { ctx.globalAlpha = Math.max(0, this.life); ctx.fillStyle = 'white'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(this.amount, this.x, this.y); ctx.globalAlpha = 1; }
+        }
 
-        // --- FUNÇÕES DE CONTROLE DO JOGO ---
-        function init() { /* ...código de init... */ }
-        function startGame() { /* ...código de startGame... */ }
-        function resetGame() { /* ...código de resetGame... */ }
-        function gameOver() { /* ...código de gameOver... */ }
-        function togglePause() { /* ...código de togglePause... */ }
-        function triggerLevelUp(isChest = false, choices = 3) { /* ...código de triggerLevelUp... */ }
-        function getAvailableUpgrades() { /* ...código de getAvailableUpgrades... */ }
-        function selectUpgrade(upgrade) { /* ...código de selectUpgrade... */ }
+        class Weapon {
+            constructor(name, description, icon) { this.name = name; this.description = description; this.icon = icon; this.cooldownTimer = 0; }
+            getBaseUpgradeOptions() { return [{ type: 'weapon', weapon: this, stat: 'damage', value: 0.15, name: `+15% Dano`, description: "Aumenta o dano.", icon: '💥' }, { type: 'weapon', weapon: this, stat: 'cooldown', value: -0.1, name: `-10% Recarga`, description: "Reduz o tempo.", icon: '⏱️' }, { type: 'weapon', weapon: this, stat: 'area', value: 0.2, name: `+20% Área`, description: "Aumenta a área de efeito.", icon: '↔️' }]; }
+            update(dt, player) {}
+            applyUpgrade(upgrade) { if (upgrade.stat === 'damage' && this.baseDamage) this.baseDamage *= (1 + upgrade.value); if (upgrade.stat === 'cooldown' && this.baseCooldown) this.baseCooldown *= (1 + upgrade.value); if (upgrade.stat === 'area') { if (this.radius) this.radius *= (1 + upgrade.value); if (this.orbitRadius) this.orbitRadius *= (1 + upgrade.value); if (this.areaRadius) this.areaRadius *= (1 + upgrade.value); } }
+            getUpgradeOptions() { return this.getBaseUpgradeOptions(); }
+        }
+        class MagicMissile extends Weapon { constructor() { super("Míssil Mágico", "Dispara projétil.", "🔮"); this.baseCooldown = 1.8; this.baseDamage = 12; this.numProjectiles = 1; } update(dt, player) { this.cooldownTimer -= dt; if (this.cooldownTimer <= 0) { this.cooldownTimer = this.baseCooldown * player.upgrades.cooldown; const enemy = findClosestEnemy(player); if (enemy) { for (let i = 0; i < this.numProjectiles; i++) { setTimeout(() => { const target = findClosestEnemy(player); if (!target) return; const angle = Math.atan2(target.y - player.y, target.x - player.x); const speed = 350 * player.upgrades.speed; const damage = this.baseDamage * player.upgrades.damage; projectiles.push(new Projectile(player.x, player.y, Math.cos(angle) * speed, Math.sin(angle) * speed, damage, 6, '#a5b4fc', 3)); sounds.shoot(); }, i * 150); } } } } getUpgradeOptions() { const opts = this.getBaseUpgradeOptions(); opts.push({ type: 'weapon', weapon: this, key: 'numProjectiles', value: 1, name: `+1 Projétil` }); return opts; } applyUpgrade(upgrade) { super.applyUpgrade(upgrade); if (upgrade.key === 'numProjectiles') this.numProjectiles += upgrade.value; } }
+        class SpinningSickle extends Weapon { constructor() { super("Foice Giratória", "Foices orbitam.", "💀"); this.baseCooldown = 0; this.baseDamage = 8; this.numSickles = 2; this.orbitRadius = 80; this.rotationSpeed = 3; this.sickles = []; this.hitCooldown = 0.5; } update(dt, player) { if (this.sickles.length < this.numSickles) { this.sickles = []; for (let i = 0; i < this.numSickles; i++) this.sickles.push({ angle: (Math.PI * 2 / this.numSickles) * i, hitEnemies: new Map() }); } this.sickles.forEach(s => { s.angle += this.rotationSpeed * dt; const sx = player.x + Math.cos(s.angle) * this.orbitRadius * player.upgrades.area; const sy = player.y + Math.sin(s.angle) * this.orbitRadius * player.upgrades.area; for (const [e, c] of s.hitEnemies.entries()) { if (c - dt <= 0) s.hitEnemies.delete(e); else s.hitEnemies.set(e, c - dt); } enemies.forEach(e => { if (s.hitEnemies.has(e)) return; if (Math.hypot(sx - e.x, sy - e.y) < 15 * player.upgrades.area + e.radius) { if (e.takeDamage(this.baseDamage * player.upgrades.damage)) s.hitEnemies.delete(e); else s.hitEnemies.set(e, this.hitCooldown); } }); }); } draw(ctx, player) { this.sickles.forEach(s => { const sx = player.x + Math.cos(s.angle) * this.orbitRadius * player.upgrades.area; const sy = player.y + Math.sin(s.angle) * this.orbitRadius * player.upgrades.area; ctx.font = `${24 * player.upgrades.area}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(this.icon, sx, sy); }); } getUpgradeOptions() { const o = this.getBaseUpgradeOptions(); o.push({ type: 'weapon', weapon: this, key: 'numSickles', value: 1, name: `+1 Foice` }); o.push({ type: 'weapon', weapon: this, key: 'rotationSpeed', value: 0.5, name: `+Vel. Rot.` }); return o; } applyUpgrade(up) { super.applyUpgrade(up); if (up.key === 'numSickles') { this.numSickles += up.v; this.sickles = []; } if (up.key === 'rotationSpeed') this.rotationSpeed += up.v; } }
+        class GarlicAura extends Weapon { constructor() { super("Aura de Alho", "Danifica e repele.", "🧄"); this.baseCooldown = 0; this.baseDamage = 5; this.radius = 75; this.knockback = 50; this.hitCooldown = 1; this.hitEnemies = new Map(); } update(dt, player) { for (const [e, c] of this.hitEnemies.entries()) { if (c - dt <= 0) this.hitEnemies.delete(e); else this.hitEnemies.set(e, c - dt); } const ar = this.radius * player.upgrades.area; enemies.forEach(e => { if (Math.hypot(player.x - e.x, player.y - e.y) < ar + e.radius) { if (!this.hitEnemies.has(e)) { if (!e.takeDamage(this.baseDamage * player.upgrades.damage)) this.hitEnemies.set(e, this.hitCooldown / player.upgrades.speed); } const a = Math.atan2(e.y - player.y, e.x - player.x); e.x += Math.cos(a) * this.knockback * player.upgrades.area * dt; e.y += Math.sin(a) * this.knockback * player.upgrades.area * dt; } }); } draw(ctx, player) { const ar = this.radius * player.upgrades.area, pulse = (Math.sin(gameTime * 4) + 1) / 2; ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.beginPath(); ctx.arc(player.x, player.y, ar * (0.8 + pulse * 0.2), 0, Math.PI * 2); ctx.fill(); } getUpgradeOptions() { const o = this.getBaseUpgradeOptions(); o.push({ type: 'weapon', weapon: this, key: 'knockback', value: 25, name: `+Repulsão` }); return o; } applyUpgrade(up) { super.applyUpgrade(up); if (up.key === 'knockback') this.knockback += up.value; } }
+        class PiercingAxe extends Weapon { constructor() { super("Machado Perfurante", "Atravessa inimigos.", "🪓"); this.baseCooldown = 2.5; this.baseDamage = 20; this.numProjectiles = 1; this.pierceCount = 3; } update(dt, player) { this.cooldownTimer -= dt; if (this.cooldownTimer <= 0) { this.cooldownTimer = this.baseCooldown * player.upgrades.cooldown; for (let i = 0; i < this.numProjectiles; i++) { const a = Math.random() * Math.PI * 2, s = 250 * player.upgrades.speed, d = this.baseDamage * player.upgrades.damage, p = new Projectile(player.x, player.y, Math.cos(a) * s, Math.sin(a) * s, d, 8, '#f97316', 2); p.pierce = this.pierceCount; p.isAxe = true; projectiles.push(p); } } } drawProjectile(ctx, p) { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(gameTime * 5); ctx.fillStyle = p.color; ctx.font = '20px sans-serif'; ctx.fillText(this.icon, -10, 10); ctx.restore(); } getUpgradeOptions() { const o = this.getBaseUpgradeOptions(); o.push({ type: 'weapon', weapon: this, key: 'numProjectiles', value: 1, name: `+1 Machado` }); o.push({ type: 'weapon', weapon: this, key: 'pierceCount', value: 2, name: `+2 Perfuração` }); return o; } applyUpgrade(up) { super.applyUpgrade(up); if (up.key === 'numProjectiles') this.numProjectiles += up.value; if (up.key === 'pierceCount') this.pierceCount += up.value; } }
+        class HolyWaterArea { constructor(x, y, parent) { this.x = x; this.y = y; this.parentWeapon = parent; this.radius = this.parentWeapon.areaRadius * player.upgrades.area; this.damage = this.parentWeapon.baseDamage * player.upgrades.damage; this.duration = this.parentWeapon.areaDuration * player.upgrades.duration; this.life = 0; this.hitCooldown = 0.5; this.hitEnemies = new Map(); } update(dt) { this.life += dt; for (const [e, c] of this.hitEnemies.entries()) { if (c - dt <= 0) this.hitEnemies.delete(e); else this.hitEnemies.set(e, c - dt); } enemies.forEach(e => { if (this.hitEnemies.has(e)) return; if (Math.hypot(this.x - e.x, this.y - e.y) < this.radius + e.radius) { if (!e.takeDamage(this.damage * this.hitCooldown)) this.hitEnemies.set(e, this.hitCooldown); } }); } draw(ctx) { const pulse = (Math.sin(this.life * 8) + 1) / 2; const cr = this.radius * (0.8 + pulse * 0.2); ctx.globalAlpha = 0.4 * (1 - (this.life / this.duration)); ctx.fillStyle = '#60a5fa'; ctx.beginPath(); ctx.arc(this.x, this.y, cr, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; } }
+        class HolyWaterBottle extends Projectile { constructor(x, y, vx, vy, parent) { super(x, y, vx, vy, 0, 8, '#93c5fd', 0.5); this.parentWeapon = parent; } update(dt) { super.update(dt); if (this.life >= this.lifespan) { damageZones.push(new HolyWaterArea(this.x, this.y, this.parentWeapon)); } } draw(ctx) { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.life * 10); ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('💧', 0, 0); ctx.restore(); } }
+        class HolyWater extends Weapon { constructor() { super("Água Benta", "Cria área de dano.", "💧"); this.baseCooldown = 4; this.baseDamage = 10; this.areaDuration = 3; this.areaRadius = 100; } update(dt, player) { this.cooldownTimer -= dt; if (this.cooldownTimer <= 0) { this.cooldownTimer = this.baseCooldown * player.upgrades.cooldown; const a = Math.random() * Math.PI * 2, s = 200; projectiles.push(new HolyWaterBottle(player.x, player.y, Math.cos(a) * s, Math.sin(a) * s, this)); sounds.shoot(); } } getUpgradeOptions() { const o = this.getBaseUpgradeOptions(); o.push({ type: 'weapon', weapon: this, key: 'areaDuration', value: 1, name: `+1s Duração` }); return o; } applyUpgrade(up) { super.applyUpgrade(up); if (up.key === 'areaDuration') this.areaDuration += up.value; } }
+        const possibleWeapons = [SpinningSickle, GarlicAura, PiercingAxe, HolyWater];
 
-        // --- LÓGICA DE SPAWN ---
+        // --- Game Control ---
+        function init() {
+            resizeCanvas(); loadMetaProgress();
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('keydown', e => { keys[e.key] = true; if (e.key === 'Escape' && gameRunning) togglePause(); });
+            window.addEventListener('keyup', e => { keys[e.key] = false; });
+            startButton.addEventListener('click', startGame);
+            restartButton.addEventListener('click', startGame);
+            resumeButton.addEventListener('click', togglePause);
+            pauseButton.addEventListener('click', togglePause);
+            storeButtonMain.addEventListener('click', () => showStore(true));
+            storeButtonGameOver.addEventListener('click', () => showStore(false));
+            closeStoreButton.addEventListener('click', hideStore);
+            setupJoystick(); updateCoinDisplays();
+        }
+        function startGame() {
+            resetGame(); gameRunning = true; paused = false; lastTime = performance.now();
+            startScreen.style.display = 'none'; gameOverScreen.style.display = 'none';
+            pauseScreen.style.display = 'none'; hud.style.display = 'block';
+            pauseButton.style.display = 'block'; initAudio(); gameLoop();
+        }
+        function resetGame() {
+            gameTime = 0; bossSpawned = false; worldBounds = { width: 3000, height: 3000 };
+            player = new Player(); camera = new Camera(canvas.width, canvas.height, worldBounds);
+            enemies = []; projectiles = []; enemyProjectiles = []; xpGems = []; items = []; particles = []; damageNumbers = []; coins = []; damageZones = [];
+            updateHUD(); updateActiveWeaponsUI();
+        }
+        function gameOver() {
+            gameRunning = false; cancelAnimationFrame(animationFrameId);
+            finalTime.textContent = formatTime(gameTime);
+            finalKills.textContent = player.killCount;
+            finalLevel.textContent = player.level;
+            finalCoins.textContent = player.coins;
+            totalCoins += player.coins;
+            saveMetaProgress(); updateCoinDisplays();
+            gameOverScreen.style.display = 'flex';
+            hud.style.display = 'none'; pauseButton.style.display = 'none';
+        }
+        function togglePause() {
+            if (!gameRunning) return;
+            paused = !paused;
+            pauseScreen.style.display = paused ? 'flex' : 'none';
+            if (!paused) { lastTime = performance.now(); gameLoop(); }
+        }
+        function triggerLevelUp(isChest = false, choices = 3) {
+            paused = true; levelUpScreen.style.display = 'flex'; upgradeOptionsContainer.innerHTML = '';
+            document.getElementById('level-up-title').textContent = isChest ? "Tesouro!" : "Nível Acima!";
+            const availableUpgrades = getAvailableUpgrades();
+            const shuffled = availableUpgrades.sort(() => 0.5 - Math.random());
+            let selectedOptions = shuffled.slice(0, choices);
+            if (selectedOptions.length === 0) { selectedOptions.push({ type: 'coins', value: 25, name: "Moedas", description: "Pegue 25 moedas.", icon: '💰' }); }
+            selectedOptions.forEach(upgrade => {
+                const card = document.createElement('div');
+                card.className = 'upgrade-card bg-gray-800 p-4 rounded-lg border-2 border-gray-700 w-64 text-center cursor-pointer';
+                card.innerHTML = `<div class="text-4xl mb-2">${upgrade.icon||'⭐'}</div><h3 class="text-xl font-bold mb-2">${upgrade.name}</h3><p class="text-gray-400">${upgrade.description}</p>`;
+                card.onclick = () => selectUpgrade(upgrade);
+                upgradeOptionsContainer.appendChild(card);
+            });
+        }
+        function getAvailableUpgrades() {
+            let upgrades = [];
+            player.weapons.forEach(w => { upgrades.push(...w.getUpgradeOptions()); });
+            if (player.weapons.length < 6) {
+                const unowned = possibleWeapons.filter(wClass => !player.weapons.some(w => w instanceof wClass));
+                if (unowned.length > 0) {
+                    const newWeapon = new (unowned[Math.floor(Math.random() * unowned.length)])();
+                    upgrades.push({ type: 'new_weapon', weaponClass: newWeapon.constructor, name: newWeapon.name, description: newWeapon.description, icon: newWeapon.icon });
+                }
+            }
+            upgrades.push({ type:'passive',stat:'maxHp',value:0.2,name:"Vida Máxima +20%",description:"Aumenta vida máx.",icon:'❤️'});
+            upgrades.push({ type:'passive',stat:'speed',value:0.1,name:"Velocidade +10%",description:"Aumenta velocidade.",icon:'🏃'});
+            upgrades.push({ type:'passive',stat:'magnetRadius',value:0.5,name:"Imã de XP +50%",description:"Aumenta raio de coleta.",icon:'🧲'});
+            return upgrades;
+        }
+        function selectUpgrade(upgrade) {
+            if (upgrade.type === 'weapon') upgrade.weapon.applyUpgrade(upgrade);
+            else if (upgrade.type === 'new_weapon') player.addWeapon(new upgrade.weaponClass());
+            else if (upgrade.type === 'passive') {
+                if (upgrade.stat === 'maxHp') { player.maxHp += player.baseMaxHp * upgrade.value; player.hp += player.baseMaxHp * upgrade.value; }
+                else if (player[upgrade.stat]) player[upgrade.stat] *= (1 + upgrade.value);
+                else if (player.upgrades[upgrade.stat]) player.upgrades[upgrade.stat] *= (1 + upgrade.value);
+            } else if (upgrade.type === 'coins') { player.coins += upgrade.value; sounds.coin(); }
+            updateActiveWeaponsUI(); levelUpScreen.style.display = 'none'; paused = false; lastTime = performance.now(); if (gameRunning) gameLoop();
+        }
+        
+        // --- Spawning ---
         let spawnTimer = 0;
         function handleSpawning(dt) {
-            if (enemies.length >= MAX_ENEMIES) return; // Limite de inimigos
+            if (enemies.length >= MAX_ENEMIES) return;
             spawnTimer -= dt;
             if (spawnTimer <= 0) {
-                 const wave = getWave(gameTime);
-                 spawnTimer = wave.interval;
-                 for (let i = 0; i < wave.count; i++) {
-                     spawnEnemy(wave.types);
-                 }
+                const wave = getWave(gameTime);
+                spawnTimer = wave.interval;
+                for (let i = 0; i < wave.count; i++) if (enemies.length < MAX_ENEMIES) spawnEnemy(wave.types);
             }
         }
-        
-        // REBALANCEADO
         function getWave(time) {
             if (time < 20) return { count: 1, types: [Slime], interval: 2 };
             if (time < 45) return { count: 2, types: [Slime], interval: 1.8 };
             if (time < 90) return { count: 4, types: [Slime, Bat], interval: 1.5 };
-            if (time < 150) return { count: 6, types: [Slime, Bat], interval: 1.2 };
-            if (time < 240) return { count: 8, types: [Bat, Tank], interval: 1 };
-            if (time < 300) return { count: 10, types: [Bat, Tank], interval: 0.8 };
-            return { count: 15, types: [Slime, Bat, Tank], interval: 0.7 };
+            if (time < 150) return { count: 6, types: [Slime, Bat, SkeletonMage], interval: 1.2 };
+            if (time < 240) return { count: 8, types: [Bat, Tank, SkeletonMage], interval: 1 };
+            if (time < 300) return { count: 10, types: [Bat, Tank, SkeletonMage], interval: 0.8 };
+            if (time > 600 && !bossSpawned) { spawnBoss(); bossSpawned = true; }
+            return { count: 15, types: [Slime, Bat, Tank, SkeletonMage], interval: 0.7 };
         }
+        function spawnEnemy(types) { const type = types[Math.floor(Math.random() * types.length)]; const angle = Math.random() * Math.PI * 2; const x = player.x + Math.cos(angle) * (canvas.width / 2 + 50); const y = player.y + Math.sin(angle) * (canvas.height / 2 + 50); enemies.push(new type(x, y)); }
+        function spawnBoss() { const angle = Math.random() * Math.PI * 2; const x = player.x + Math.cos(angle) * (canvas.width / 2 + 50); const y = player.y + Math.sin(angle) * (canvas.height / 2 + 50); enemies.push(new Boss(x, y)); bossAlert.style.display = 'block'; setTimeout(() => bossAlert.style.display = 'none', 4000); }
         
-        function spawnEnemy(types) { /* ...código de spawnEnemy... */ }
-        function spawnBoss() { /* ...código de spawnBoss... */ }
-
-        // --- ATUALIZAÇÕES E RENDERIZAÇÃO ---
+        // --- Main Loop ---
         function update(dt) {
             player.update(dt);
-            enemies.forEach(e => e.update(dt, player));
-            projectiles.forEach(p => p.update(dt));
-            xpGems.forEach(g => g.update(dt, player));
-            coins.forEach(c => c.update(dt, player));
-            items.forEach(i => i.update(dt, player)); // NOVO
-            particles.forEach(p => p.update(dt));
-            damageNumbers.forEach(d => d.update(dt));
-
+            [enemies, projectiles, enemyProjectiles, xpGems, coins, items, particles, damageNumbers, damageZones].forEach(arr => arr.forEach(e => e.update(dt, player)));
             handleCollisions();
-            
             projectiles = projectiles.filter(p => p.life < p.lifespan);
+            enemyProjectiles = enemyProjectiles.filter(p => p.life < p.lifespan);
+            damageZones = damageZones.filter(z => z.life < z.duration);
+            enemies = enemies.filter(e => { if (e.hp <= 0) { e.onDeath(); return false; } return true; });
             particles = particles.filter(p => p.life > 0);
             damageNumbers = damageNumbers.filter(d => d.life > 0);
-
             handleSpawning(dt);
             camera.update(player);
-            
-            // NOVO: Controla a vinheta de vida baixa
             lowHealthVignette.style.display = (player.hp / player.maxHp < 0.25) ? 'block' : 'none';
-
-            if (screenShake.duration > 0) screenShake.duration -= dt;
-            else if (screenShake.active) screenShake.active = false;
+            if (screenShake.duration > 0) screenShake.duration -= dt; else if (screenShake.active) screenShake.active = false;
         }
-        
         function handleCollisions() {
-            // Projéteis vs Inimigos (MELHORADO com perfuração)
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 const p = projectiles[i];
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     const e = enemies[j];
-                    if (p.hitEnemies && p.hitEnemies.has(e)) continue; // Já atingiu este inimigo
-                    
+                    if (p.hitEnemies.has(e)) continue;
                     if (Math.hypot(p.x - e.x, p.y - e.y) < p.radius + e.radius) {
-                        if(e.takeDamage(p.damage)) {
-                           enemies.splice(j, 1);
-                        }
-
-                        if (p.pierce > 0) {
-                            p.pierce--;
-                            if (!p.hitEnemies) p.hitEnemies = new Set();
-                            p.hitEnemies.add(e); // Marca como atingido
-                        } else {
-                            projectiles.splice(i, 1);
-                            break; 
-                        }
+                        if (e.takeDamage(p.damage)) p.hitEnemies.add(e);
+                        if (p.pierce > 0) { p.pierce--; p.hitEnemies.add(e); } else { projectiles.splice(i, 1); break; }
                     }
                 }
             }
-
-            // Jogador vs Inimigos
-            for (let i = enemies.length - 1; i >= 0; i--) {
-                const e = enemies[i];
-                if (Math.hypot(player.x - e.x, player.y - e.y) < player.radius + e.radius) {
-                    player.takeDamage(e.damage);
-                }
-            }
-
-            // Jogador vs Coletáveis (MELHORADO com cura)
-            for (let i = items.length - 1; i >= 0; i--) {
-                const item = items[i];
-                if (Math.hypot(player.x - item.x, player.y - item.y) < player.radius + item.radius) {
-                    if (item instanceof HealthPickup) {
-                        player.heal(item.healAmount);
-                    } else if (item instanceof Chest) {
-                        triggerLevelUp(true, 3);
-                    }
-                    items.splice(i, 1);
-                }
-            }
-            // ... resto das colisões (XP, Moedas)
+            for (let i = enemies.length - 1; i >= 0; i--) { if (Math.hypot(player.x - enemies[i].x, player.y - enemies[i].y) < player.radius + enemies[i].radius) player.takeDamage(enemies[i].damage); }
+            for (let i = enemyProjectiles.length - 1; i >= 0; i--) { const ep = enemyProjectiles[i]; if (Math.hypot(player.x - ep.x, player.y - ep.y) < player.radius + ep.radius) { player.takeDamage(ep.damage); enemyProjectiles.splice(i, 1); } }
+            for (let i = items.length - 1; i >= 0; i--) { const it = items[i]; if (Math.hypot(player.x - it.x, player.y - it.y) < player.radius + it.radius) { if (it instanceof HealthPickup) player.heal(it.healAmount); else if (it instanceof Chest) triggerLevelUp(true, 3); items.splice(i, 1); } }
+            for (let i = xpGems.length - 1; i >= 0; i--) { const g = xpGems[i]; if (Math.hypot(player.x - g.x, player.y - g.y) < player.radius + g.radius) { player.addXp(g.value); sounds.xp(); xpGems.splice(i, 1); } }
+            for (let i = coins.length - 1; i >= 0; i--) { const c = coins[i]; if (Math.hypot(player.x - c.x, player.y - c.y) < player.radius + c.radius) { player.coins++; sounds.coin(); coins.splice(i, 1); } }
         }
-
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             camera.apply(ctx);
             drawBackgroundGrid();
-
-            items.forEach(i => i.draw(ctx)); // Desenha itens primeiro
+            items.forEach(i => i.draw(ctx));
             xpGems.forEach(g => g.draw(ctx));
             coins.forEach(c => c.draw(ctx));
             enemies.forEach(e => e.draw(ctx));
-            
-            // Desenho customizado para machados
-            projectiles.forEach(p => {
-                const weapon = player.weapons.find(w => w instanceof PiercingAxe);
-                if (p.isAxe && weapon) {
-                    weapon.drawProjectile(ctx, p);
-                } else {
-                    p.draw(ctx);
-                }
-            });
-
+            projectiles.forEach(p => { if (p.isAxe) { const w = player.weapons.find(w => w instanceof PiercingAxe); if (w) w.drawProjectile(ctx, p); } else p.draw(ctx); });
+            enemyProjectiles.forEach(e => e.draw(ctx));
             player.draw(ctx);
             player.weapons.forEach(w => w.draw && w.draw(ctx, player));
+            damageZones.forEach(z => z.draw(ctx));
             particles.forEach(p => p.draw(ctx));
             damageNumbers.forEach(d => d.draw(ctx));
-            
             camera.release(ctx);
         }
+        function drawBackgroundGrid() { ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.lineWidth = 1; const gs = 50; const sx = Math.floor(-camera.x / gs) * gs + camera.x, sy = Math.floor(-camera.y / gs) * gs + camera.y; for (let x = sx; x < canvas.width; x += gs) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); } for (let y = sy; y < canvas.height; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); } }
+
+        // --- UI & Meta ---
+        function updateHUD() { timerDisplay.textContent = `Tempo: ${formatTime(gameTime)}`; killCountDisplay.textContent = `Abates: ${player.killCount}`; coinsCollectedDisplay.textContent = player.coins; levelDisplay.textContent = `Nível: ${player.level}`; const xpN = getXpForLevel(player.level + 1); const xpP = Math.min(100, (player.xp / xpN) * 100); xpBar.style.width = `${xpP}%`; }
+        function updateActiveWeaponsUI() { activeWeaponsUI.innerHTML = ''; player.weapons.forEach(w => { const el = document.createElement('div'); el.className = 'hud-element text-sm px-3 py-1 rounded-md flex items-center gap-2'; el.innerHTML = `<span>${w.icon}</span> ${w.name}`; activeWeaponsUI.appendChild(el); }); }
+        function saveMetaProgress() { localStorage.setItem('hS_TC', totalCoins); localStorage.setItem('hS_MU', JSON.stringify(metaUpgrades)); }
+        function loadMetaProgress() { totalCoins = parseInt(localStorage.getItem('hS_TC') || '0'); const saved = JSON.parse(localStorage.getItem('hS_MU') || '{}'); Object.keys(metaUpgradesList).forEach(k => { metaUpgrades[k] = { ...metaUpgradesList[k], ...(saved[k] || {}) }; }); }
+        function buyMetaUpgrade(key) { const up = metaUpgrades[key]; const cost = getMetaUpgradeCost(key); if (totalCoins >= cost && up.level < up.maxLevel) { totalCoins -= cost; up.level++; saveMetaProgress(); renderStore(); updateCoinDisplays(); } }
+        function getMetaUpgradeCost(key) { const up = metaUpgrades[key]; return Math.floor(up.baseCost * Math.pow(1.5, up.level)); }
+        function renderStore() { metaUpgradesContainer.innerHTML = ''; Object.keys(metaUpgrades).forEach(key => { const up = metaUpgrades[key]; const cost = getMetaUpgradeCost(key); const card = document.createElement('div'); card.className = 'bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col items-center'; const maxed = up.level >= up.maxLevel; card.innerHTML = `<h3 class="text-lg font-bold text-yellow-300">${up.name}</h3><p class="text-sm text-gray-400 mb-2">${up.description}</p><p class="mb-2">Nível: ${up.level}/${up.maxLevel}</p><button class="w-full py-2 rounded ${maxed ? 'bg-gray-600 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-500'}" ${maxed ? 'disabled' : ''} onclick="buyMetaUpgrade('${key}')">${maxed ? 'MAX' : `Custo: ${cost} <i class='coin-icon'>$</i>`}</button>`; metaUpgradesContainer.appendChild(card); }); }
+        function updateCoinDisplays() { totalCoinsDisplayMain.textContent = totalCoins; totalCoinsDisplayStore.textContent = totalCoins; }
+        function showStore(isFromMain) { renderStore(); storeScreen.style.display = 'flex'; if (isFromMain) startScreen.style.display = 'none'; else gameOverScreen.style.display = 'none'; }
+        function hideStore() { storeScreen.style.display = 'none'; startScreen.style.display = 'flex'; }
+
+        // --- Game Loop & Utils ---
+        function gameLoop(timestamp) {
+            if (!gameRunning || paused) { animationFrameId = null; return; }
+            const dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+            gameTime += dt;
+            update(dt);
+            draw();
+            updateHUD();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; isMobile = canvas.width < 768; }
+        function formatTime(s) { const m = Math.floor(s / 60); const sc = Math.floor(s % 60); return `${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`; };
+        function getXpForLevel(l) { if (l >= XP_PER_LEVEL.length) return 100 + (l - XP_PER_LEVEL.length + 1) * 50; return XP_PER_LEVEL[l]; }
+        function findClosestEnemy(pos) { let c = null, cD = Infinity; for (const e of enemies) { const d = Math.hypot(pos.x - e.x, pos.y - e.y); if (d < cD) { cD = d; c = e; } } return c; }
+        function triggerScreenShake(d, m) { screenShake = { duration: d, magnitude: m, active: true }; }
         
-        function drawBackgroundGrid() { /* ...código do grid... */ }
-        function updateHUD() { /* ...código do HUD... */ }
-        function updateActiveWeaponsUI() { /* ...código da UI de armas... */ }
-
-        // --- METAPROGRESSÃO (sem alterações) ---
-        function saveMetaProgress() { /* ...código... */ }
-        function loadMetaProgress() { /* ...código... */ }
-        function buyMetaUpgrade(key) { /* ...código... */ }
-        function getMetaUpgradeCost(key) { /* ...código... */ }
-        function renderStore() { /* ...código... */ }
-        function updateCoinDisplays() { /* ...código... */ }
-        function showStore(isFromMain) { /* ...código... */ }
-        function hideStore() { /* ...código... */ }
-
-        // --- LOOP PRINCIPAL DO JOGO ---
-        function gameLoop(timestamp) { /* ...código do gameLoop... */ }
-
-        // --- FUNÇÕES UTILITÁRIAS ---
-        function resizeCanvas() { /* ...código... */ }
-        function formatTime(seconds) { /* ...código... */ }
-        function getXpForLevel(level) { /* ...código... */ }
-        function findClosestEnemy(pos) { /* ...código... */ }
-        function triggerScreenShake(duration, magnitude) { /* ...código... */ }
-
-        // --- INICIALIZAÇÃO ---
         init();
     });
-    </script>
+</script>
 </body>
 </html>
